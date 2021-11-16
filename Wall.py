@@ -69,6 +69,7 @@ class UpdateWall:
                                              r'https://resi\.ze-robot\.com/[\w/-]*-1920×1080.jpg')
             case 'r-wallpaper':
                 ...
+        # TODO самостоятельно подставлять путь до картинки.
         os.system("gsettings set org.cinnamon.desktop.background picture-uri 'file:///home/user/Walls/background.jpg'")
 
 
