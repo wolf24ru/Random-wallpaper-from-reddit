@@ -1,7 +1,13 @@
+import secret
+
 import os
 import re
+import sys
+import praw
 import random
+import pathlib
 import requests
+import argparse
 import urllib.request
 from bs4 import BeautifulSoup
 # for test
