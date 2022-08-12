@@ -130,12 +130,19 @@ class UpdateWall:
     def install(self):
         match self.resource:
             case 'ze-robot':
-                self._download_from_resource('a', 'class', '_3t5uN8xUmg0TOwRCOGQEcU',
-                                             r'https://resi\.ze-robot\.com/[\w/-]*-1920×1080.jpg')
+                self.get_link_list_reddit_redditor()
+                # self.get_link_from_web('a', 'class', '_3t5uN8xUmg0TOwRCOGQEcU',
+                #                              r'https://resi\.ze-robot\.com/[\w/-]*-1920×1080.jpg')
             case 'r-wallpaper':
-                ...
-        # TODO самостоятельно подставлять путь до картинки.
-        os.system("gsettings set org.cinnamon.desktop.background picture-uri 'file:///home/user/Walls/background.jpg'")
+                self.get_link_list_reddit_subreddit()
+            case 'all':
+                self.get_link_list_reddit_redditor()
+                self.get_link_list_reddit_subreddit()
+            case 'web_':
+                self._connection(self.href_resource)
+        self._download_from_resource()
+        os.system(f"gsettings set org.cinnamon.desktop.background picture-uri 'file://{self.file_path}'")
+
 
 
 if __name__ == '__main__':
