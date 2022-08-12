@@ -144,6 +144,8 @@ class UpdateWall:
         os.system(f"gsettings set org.cinnamon.desktop.background picture-uri 'file://{self.file_path}'")
 
 
+def args_error(error):
+    print(f'Error: {error}')
 
 if __name__ == '__main__':
     test = UpdateWall()
