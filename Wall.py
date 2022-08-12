@@ -10,19 +10,23 @@ import requests
 import argparse
 import urllib.request
 from bs4 import BeautifulSoup
-# for test
-from pprint import pprint
-
 
 # TODO сделать БД с хранением уже загруженных вариантов.
 
-# TODO сделать загрузку с  https://www.reddit.com/r/wallpaper/new/.
-# TODO сделать возможность выбирать откуда загружать.
+# TODO сделать возможность выбирать откуда загружать, больше двух вариантов.
+
+# TODO сделать что-то вроде черного списка.
+
 # TODO добавить какие ни будь индикаторы работы, а то просто пустая командная строка.
 
 # TODO Придумать как  исключить картинки с F1.
+
+# TODO Научить отличать nsfw картинки и по необходимости исключать их.
+
+# TODO Сделать заглушку для случия если обои не найдены(скорее всего просто ставить предыдущии) и сообщение об этом
+
 # TODO Реализовать запуск на windows.
-# TODO сделать что-то вроде черного списка.
+
 
 class UpdateWall:
     global html_links
@@ -30,10 +34,14 @@ class UpdateWall:
         'ze-robot': 'https://www.reddit.com/user/ze-robot/',
         'r-wallpaper': 'https://www.reddit.com/r/wallpaper/'
     }
+
+
     word_exceptions = [
 
     ]
-    def __init__(self, resource='ze-robot', file_path='background.jpg'):
+    # DE_SESSION = os.system('echo $DESKTOP_SESSION') 'echo $XDG_CURRENT_DESKTOP'  'ls /usr/bin/*session*'
+
+    def __init__(self, args):
         self.href_list = []
         self.file_path = file_path
         try:
@@ -44,7 +52,6 @@ class UpdateWall:
             self.href_resource = html_links['ze-robot']
             print(f'Ваш ресурс еще не добавлен, в качестве ресурса по умолчанию'
                   f'Установлен ze-robot')
-        self._connection(self.href_resource)
 
     def _connection(self, url: str):
         connect = urllib.request.urlopen(url)
