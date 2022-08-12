@@ -32,7 +32,8 @@ class UpdateWall:
     global html_links
     html_links = {
         'ze-robot': 'https://www.reddit.com/user/ze-robot/',
-        'r-wallpaper': 'https://www.reddit.com/r/wallpaper/'
+        'r-wallpaper': 'https://www.reddit.com/r/wallpaper/',
+        'all': None,
     }
 
 
