@@ -44,10 +44,16 @@ class UpdateWall:
 
     def __init__(self, args):
         self.href_list = []
-        self.file_path = file_path
+        self.file_path = args.file / 'background.jpg'
+        self.limit = args.limit
+        self.reddit = praw.Reddit(
+            client_id=secret.client_id,
+            client_secret=secret.client_secret,
+            user_agent=secret.user_agent
+        )
         try:
-            self.href_resource = html_links[resource]
-            self.resource = resource
+            self.href_resource = html_links[args.resource]
+            self.resource = args.resource
         except KeyError:
             self.resource = 'ze-robot'
             self.href_resource = html_links['ze-robot']
