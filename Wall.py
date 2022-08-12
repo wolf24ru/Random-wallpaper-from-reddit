@@ -65,7 +65,8 @@ class UpdateWall:
         html_code = connect.read().decode('utf-8')
         self.soup = BeautifulSoup(html_code, 'lxml')
 
-    def _download_from_resource(self, teg: str, argument: str, argument_main: str, reg: str):
+    def get_link_from_web(self, teg: str, argument: str, argument_main: str, reg: str):
+        # В разработке
         link_list = self.soup.find_all(teg, {argument: argument_main})
         for href in link_list:
             if re.search(reg, href['href']):
