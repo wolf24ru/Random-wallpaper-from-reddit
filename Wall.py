@@ -147,6 +147,31 @@ class UpdateWall:
 def args_error(error):
     print(f'Error: {error}')
 
-if __name__ == '__main__':
-    test = UpdateWall()
+
+def main(argv):
+    LIMIT = 15
+    PATH = pathlib.Path(__file__).parent.absolute()
+
+    parser = argparse.ArgumentParser(description='Load wallpaper from reddit', prog='Random_wallpaper')
+    parser.error = args_error
+
+    parser.add_argument('-r', '--resource',
+                        help='selecting a resource to upload',
+                        choices=['ze-robot', 'r-wallpaper', 'all'],
+                        default='ze-robot')
+    parser.add_argument('-l', '--limit',
+                        type=int, help='quantity limit for sampling',
+                        default=LIMIT)
+    parser.add_argument('-f', '--file', type=pathlib.Path, help='path to save file ',
+                        default=PATH,
+                        metavar='path/to/folder')
+    parser.add_argument('-v', '--version', action='version',
+                        version='%(prog)s 1.0', help='program version')
+
+    args = parser.parse_args()
+    test = UpdateWall(args)
     test.install()
+
+
+if __name__ == '__main__':
+    main(sys.argv)
