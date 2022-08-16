@@ -30,6 +30,8 @@ from bs4 import BeautifulSoup
 # ToDO декомпозировать все
 
 class UpdateWall:
+    # Возможно стоит удалить и переработать global. На данный момент толку от нее нет
+    # Данная переменная нужна была при парсинге сайтов
     global html_links
     html_links = {
         'ze-robot': 'https://www.reddit.com/user/ze-robot/',
@@ -37,10 +39,6 @@ class UpdateWall:
         'all': None,
     }
 
-
-    word_exceptions = [
-
-    ]
     # DE_SESSION = os.system('echo $DESKTOP_SESSION') 'echo $XDG_CURRENT_DESKTOP'  'ls /usr/bin/*session*'
 
     def __init__(self, args):
@@ -52,6 +50,7 @@ class UpdateWall:
             client_secret=secret.client_secret,
             user_agent=secret.user_agent
         )
+        self._os_system()
         try:
             self.href_resource = html_links[args.resource]
             self.resource = args.resource
@@ -61,12 +60,46 @@ class UpdateWall:
             print(f'Ваш ресурс еще не добавлен, в качестве ресурса по умолчанию'
                   f'Установлен ze-robot')
 
+    def _os_system(self):
+        """Проверка установленной операционной системы"""
+        match platform.system():
+            case 'Linux':
+                self._linux_release()
+            case 'Windows':
+                ctypes.windll.user32.SystemParametersInfoW(20, 0, str(self.file_path), 3)
+
+    def _linux_release(self):
+        """"Проверка рабочего окружения и выдача команды на изменение обоев"""
+        match os.environ.get('XDG_CURRENT_DESKTOP'):
+            case 'cinnamon' | 'X-Cinnamon':
+                os.system(f"gsettings set org.cinnamon.desktop.background picture-uri 'file://{self.file_path}'")
+            case 'GNOME':
+                os.system(f"gsettings set org.gnome.desktop.background picture-uri 'file://{self.file_path}'")
+            case'LXQt':
+                # Lubuntu
+                # self.system_cmd = f"pcmanfm-qt --set-wallpaper='{self.ziro_file}'"
+                # необходимо починить. меняет только первй рази и затем после перезагрузки системы
+                os.system(f"pcmanfm-qt -w '{self.file_path}'")
+            case 'xfce':
+                desktop_wallpaper = subprocess.run(['xfconf-query', '-c', 'xfce4-desktop', '-m'],
+                                                   stdout=subprocess.PIPE) \
+                    .stdout.decode('utf-8')
+                os.system(f"xfconf-query -c xfce4-desktop -p {desktop_wallpaper} -s {self.file_path}")
+            case _:
+                assert 'Неизвестное графическое окружение'
+                # TODO Вставить сюда предложение использовать команду без имени файла для изменения обоев
+                # custom_cmd = input()
+                exit()
+
+
     def _connection(self, url: str):
+        """Подключение к сайту и подготовка супа"""
         connect = urllib.request.urlopen(url)
         html_code = connect.read().decode('utf-8')
         self.soup = BeautifulSoup(html_code, 'lxml')
 
     def get_link_from_web(self, teg: str, argument: str, argument_main: str, reg: str):
+        """Парсинг сайта и получение ссылок изображений для загрузки"""
         # В разработке
         link_list = self.soup.find_all(teg, {argument: argument_main})
         for href in link_list:
@@ -76,7 +109,6 @@ class UpdateWall:
             self._connection(self.href_resource)
             self.get_link_from_web(teg, argument, argument_main, reg)
             assert f'Опять не прогрузилось попробуй снова'
-        self._download_from_resource()
 
     def get_link_list_reddit_redditor(self):
         # TODO оптимизировать и сделать более универсальным
@@ -126,13 +158,16 @@ class UpdateWall:
                     continue
 
     def _download_from_resource(self):
+        """Рандомный выбор картинки и её загрузка"""
         img_link = random.choice(self.href_list)
         resource = requests.get(img_link)
+
         out = open(self.file_path, 'wb')
         out.write(resource.content)
         out.close()
 
     def install(self):
+        """Загрузка с выбранного ресурса"""
         match self.resource:
             case 'ze-robot':
                 self.get_link_list_reddit_redditor()
@@ -146,14 +181,15 @@ class UpdateWall:
             case 'web_':
                 self._connection(self.href_resource)
         self._download_from_resource()
-        os.system(f"gsettings set org.cinnamon.desktop.background picture-uri 'file://{self.file_path}'")
 
 
 def args_error(error):
+    """Вывод ошибки при некорректных аргументах"""
     print(f'Error: {error}')
 
 
 def main(argv):
+    """Создание аргументов и запуск программы"""
     LIMIT = 15
     PATH = pathlib.Path(__file__).parent.absolute()
 
@@ -171,7 +207,7 @@ def main(argv):
                         default=PATH,
                         metavar='path/to/folder')
     parser.add_argument('-v', '--version', action='version',
-                        version='%(prog)s 1.0', help='program version')
+                        version='%(prog)s 1.1', help='program version')
 
     args = parser.parse_args()
     test = UpdateWall(args)
