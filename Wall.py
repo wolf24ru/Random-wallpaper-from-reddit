@@ -5,9 +5,12 @@ import re
 import sys
 import praw
 import random
+import ctypes
 import pathlib
 import requests
 import argparse
+import platform
+import subprocess
 import urllib.request
 from bs4 import BeautifulSoup
 
