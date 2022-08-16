@@ -27,9 +27,7 @@ from bs4 import BeautifulSoup
 # TODO Научить отличать nsfw картинки и по необходимости исключать их.
 
 # TODO Сделать заглушку для случия если обои не найдены(скорее всего просто ставить предыдущии) и сообщение об этом
-
-# TODO Реализовать запуск на windows.
-
+# ToDO декомпозировать все
 
 class UpdateWall:
     global html_links
@@ -81,6 +79,8 @@ class UpdateWall:
         self._download_from_resource()
 
     def get_link_list_reddit_redditor(self):
+        # TODO оптимизировать и сделать более универсальным
+        """"Получение ссылок изображений с постов пользователя"""
         users_comments = self.reddit.redditor('ze-robot').new(limit=self.limit)
         reg = r'https://resi\.ze-robot\.com/[\w/-]*-1920%C3%971080.jpg'
 
@@ -89,6 +89,8 @@ class UpdateWall:
                 self.href_list.append(link)
 
     def get_link_list_reddit_subreddit(self):
+        # TODO так же сделать функцию более универсальной
+        """Получение ссылок изображений с постов сабредита"""
         media_data = self.reddit.subreddit('wallpaper').new(limit=self.limit)
         aspect_ratio = 16 / 9
 
