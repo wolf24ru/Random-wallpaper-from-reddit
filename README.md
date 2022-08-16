@@ -3,7 +3,14 @@
 
 (en)Download and install random wallpaper from [ze-robot](https://www.reddit.com/user/ze-robot/?sort=new) and [r-wallpaper](https://www.reddit.com/r/wallpaper/new/). 
 
-> **_NOTE:_** At the moment, the code is relevant only for Linux **Mint**.
+> **_NOTE:_** At the moment, the code is relevant for:
+>  - Linux:
+>    - cinnamon
+>    - GNOME
+>  
+> 
+>  - Windows:
+>    - 11
 ___
 
 ### To run the code:
