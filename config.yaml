@@ -1,0 +1,7 @@
+main:
+  file_path: ./
+  file_name: background.jpg
+
+display:
+  resolution: 1920x1080
+  ratio: 16:9
