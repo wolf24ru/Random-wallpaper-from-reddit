@@ -99,6 +99,8 @@ class UpdateWall:
                 os.system(f"pcmanfm-qt --set-wallpaper={str(self.file_path)}")
             case 'LXDE':
                 os.system(f"pcmanfm --set-wallpaper={str(self.file_path)}")
+            case 'MATE':
+                os.system(f"gsettings set org.mate.desktop.background icture-filename {str(self.file_path)}")
             case 'xfce':
                 desktop_wallpaper = subprocess.run(['xfconf-query', '-c', 'xfce4-desktop', '-m'],
                                                    stdout=subprocess.PIPE) \
