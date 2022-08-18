@@ -7,6 +7,8 @@
 >  - Linux:
 >    - cinnamon
 >    - GNOME
+>    - LXDE
+>    - MATE
 >  
 > 
 >  - Windows:
