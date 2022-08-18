@@ -93,11 +93,13 @@ class UpdateWall:
                 os.system(f"gsettings set org.cinnamon.desktop.background picture-uri 'file://{self.file_path}'")
             case 'GNOME' | 'ubuntu:GNOME':
                 os.system(f"gsettings set org.gnome.desktop.background picture-uri 'file://{self.file_path}'")
-            case'LXQt' | 'LXDE':
+            case'LXQt':
                 # Lubuntu
                 # self.system_cmd = f"pcmanfm-qt --set-wallpaper='{self.ziro_file}'"
                 # необходимо починить. меняет только первй рази и затем после перезагрузки системы
-                os.system(f"pcmanfm-qt -w '{self.file_path}'")
+                os.system(f"pcmanfm-qt --set-wallpaper={self.file_path}")
+            case 'LXDE':
+                os.system(f"pcmanfm --set-wallpaper={self.file_path}")
             case 'xfce':
                 desktop_wallpaper = subprocess.run(['xfconf-query', '-c', 'xfce4-desktop', '-m'],
                                                    stdout=subprocess.PIPE) \
