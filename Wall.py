@@ -107,6 +107,8 @@ class UpdateWall:
                     .stdout.decode('utf-8')
                 os.system(f"xfconf-query -c xfce4-desktop -p {desktop_wallpaper} -s {self.file_path}")
             case 'KDE':
+                # Та же ситуация, что и с LXQt меняет только один раз и заме не меняет изображение при том же
+                # названии файла
                 self.__set_kde_wallpaper()
             case _:
                 assert 'Неизвестное графическое окружение'
