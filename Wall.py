@@ -90,7 +90,7 @@ class UpdateWall:
         match os.environ.get('XDG_CURRENT_DESKTOP'):
             case 'cinnamon' | 'X-Cinnamon':
                 os.system(f"gsettings set org.cinnamon.desktop.background picture-uri 'file://{self.file_path}'")
-            case 'GNOME' | 'ubuntu:GNOME' | 'GNOME-Classic:GNOME':
+            case 'GNOME' | 'ubuntu:GNOME' | 'GNOME-Classic:GNOME' | 'GNOME-Flashback:GNOME':
                 os.system(f"gsettings set org.gnome.desktop.background picture-uri 'file://{self.file_path}'")
             case'LXQt':
                 # Lubuntu
