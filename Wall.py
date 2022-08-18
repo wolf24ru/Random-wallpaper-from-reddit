@@ -51,7 +51,6 @@ class UpdateWall:
             client_secret=secret.client_secret,
             user_agent=secret.user_agent
         )
-        self._os_system()
         try:
             self.href_resource = html_links[args.resource]
             self.resource = args.resource
@@ -203,6 +202,7 @@ class UpdateWall:
             case 'web_':
                 self._connection(self.href_resource)
         self._download_from_resource()
+        self._os_system()
 
 
 def args_error(error):
