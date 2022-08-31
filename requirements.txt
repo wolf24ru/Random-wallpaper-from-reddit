@@ -3,4 +3,5 @@ requests~=2.26.0
 argparse~=1.4.0
 bs4~=0.0.1
 beautifulsoup4~=4.10.0
-dbus-python~=1.2.18
+# dbus-python~=1.2.18
+PyYAML~=6.0

@@ -5,6 +5,7 @@ import re
 import sys
 import praw
 # import dbus
+import yaml
 import random
 import ctypes
 import pathlib
@@ -68,22 +69,22 @@ class UpdateWall:
             case 'Windows':
                 ctypes.windll.user32.SystemParametersInfoW(20, 0, str(self.file_path), 3)
 
-    # def __set_kde_wallpaper(self):
-    #     plugin = 'org.kde.image'
-    #     jscript = f"""
-    #     var allDesktops = desktops();
-    #     print (allDesktops);
-    #     for (i=0;i<allDesktops.length;i++) {{
-    #         d = allDesktops[i];
-    #         d.wallpaperPlugin = "{plugin}";
-    #         d.currentConfigGroup = Array("Wallpaper", "{plugin}", "General");
-    #         d.writeConfig("Image", "file://{self.file_path}")
-    #     }}
-    #     """
-    #     bus = dbus.SessionBus()
-    #     plasma = dbus.Interface(bus.get_object(
-    #         'org.kde.plasmashell', '/PlasmaShell'), dbus_interface='org.kde.PlasmaShell')
-    #     plasma.evaluateScript(jscript)
+    def __set_kde_wallpaper(self):
+        plugin = 'org.kde.image'
+        jscript = f"""
+        var allDesktops = desktops();
+        print (allDesktops);
+        for (i=0;i<allDesktops.length;i++) {{
+            d = allDesktops[i];
+            d.wallpaperPlugin = "{plugin}";
+            d.currentConfigGroup = Array("Wallpaper", "{plugin}", "General");
+            d.writeConfig("Image", "file://{self.file_path}")
+        }}
+        """
+        bus = dbus.SessionBus()
+        plasma = dbus.Interface(bus.get_object(
+            'org.kde.plasmashell', '/PlasmaShell'), dbus_interface='org.kde.PlasmaShell')
+        plasma.evaluateScript(jscript)
 
     def _linux_release(self):
         """"Проверка рабочего окружения и выдача команды на изменение обоев"""
