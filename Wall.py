@@ -7,6 +7,7 @@ import praw
 # import dbus
 import yaml
 import random
+import shutil
 import ctypes
 import pathlib
 import requests
@@ -15,6 +16,9 @@ import platform
 import subprocess
 import urllib.request
 from bs4 import BeautifulSoup
+
+from tqdm.auto import tqdm
+# from progress.bar import FillingSquaresBar
 
 # TODO сделать БД с хранением уже загруженных вариантов.
 
@@ -47,6 +51,7 @@ class UpdateWall:
         self.href_list = []
         self.file_path = args.file / 'background.jpg'
         self.limit = args.limit
+        self.recursion = False
         self.display_resolution = self._set_display_resolution(args.display_resolution)
         self.reddit = praw.Reddit(
             client_id=secret.client_id,
@@ -165,50 +170,59 @@ class UpdateWall:
     def get_link_list_reddit_redditor(self):
         # TODO оптимизировать и сделать более универсальным
         """"Получение ссылок изображений с постов пользователя"""
-        users_comments = self.reddit.redditor(self.resource).new(limit=self.limit)
+        users_comments = self.reddit.redditor('ze-robot').new(limit=self.limit)
         horizontal, vertical = self.display_resolution.split('x')
         reg = fr'https://resi\.ze-robot\.com/[\w/-]*-{horizontal}%C3%97{vertical}.jpg'
+        with tqdm(total=self.limit) as pbar:
+            pbar.set_description('get link image')
 
-        for comment in users_comments:
-            for link in re.findall(reg, comment.body_html):
-                self.href_list.append(link)
+            for comment in users_comments:
+                for link in re.findall(reg, comment.body_html):
+                    self.href_list.append(link)
+                pbar.update()
+        print()
 
     def get_link_list_reddit_subreddit(self):
         # TODO так же сделать функцию более универсальной
         """Получение ссылок изображений с постов сабредита"""
         media_data = self.reddit.subreddit('wallpaper').new(limit=self.limit)
         aspect_ratio = 16 / 9
-
-        for post in media_data:
-            if hasattr(post, 'crosspost_parent_list'):
-                # do if post have repost image
-                try:
-                    # try to get image if in post it's one
-                    images_list = post.crosspost_parent_list[0].get('preview').get('images')[0].get('source')
-                    if int(images_list['width']) / int(images_list['height']) == aspect_ratio:
-                        self.href_list.append(images_list['url'])
-                except AttributeError:
-                    # try to get image if in post they many
-                    for img in post.crosspost_parent_list[0].get('media_metadata').values():
-                        img_s = img['s']
-                        if int(img_s['x']) / int(img_s['y']) == aspect_ratio:
-                            self.href_list.append(img_s['u'])
-            else:
-                # just post
-                if hasattr(post, 'preview'):
-                    # try to get image if in post it's one
-                    images_list = post.preview.get('images')[0].get('source')
-                    if int(images_list['width']) / int(images_list['height']) == aspect_ratio:
-                        self.href_list.append(images_list['url'])
-                elif hasattr(post, 'media_metadata'):
-                    # try to get image if in post they many
-                    for img in post.media_metadata.values():
-                        img_s = img['s']
-                        if int(img_s['x']) / int(img_s['y']) == aspect_ratio:
-                            self.href_list.append(img_s['u'])
+        with tqdm(total=self.limit) as pbar:
+            pbar.set_description('get link image')
+            for post in media_data:
+                if hasattr(post, 'crosspost_parent_list'):
+                    # do if post have repost image
+                    try:
+                        # try to get image if in post it's one
+                        images_list = post.crosspost_parent_list[0].get('preview').get('images')[0].get('source')
+                        if int(images_list['width']) / int(images_list['height']) == aspect_ratio:
+                            self.href_list.append(images_list['url'])
+                    except AttributeError:
+                        # try to get image if in post they many
+                        for img in post.crosspost_parent_list[0].get('media_metadata').values():
+                            img_s = img['s']
+                            if int(img_s['x']) / int(img_s['y']) == aspect_ratio:
+                                self.href_list.append(img_s['u'])
                 else:
-                    assert 'Unknown attribute. The post is not recognized'
-                    continue
+                    # just post
+                    if hasattr(post, 'preview'):
+                        # try to get image if in post it's one
+                        images_list = post.preview.get('images')[0].get('source')
+                        if int(images_list['width']) / int(images_list['height']) == aspect_ratio:
+                            self.href_list.append(images_list['url'])
+                    elif hasattr(post, 'media_metadata'):
+                        # try to get image if in post they many
+                        p = 0
+                        for img in post.media_metadata.values():
+                            p += 1
+                            img_s = img['s']
+                            if int(img_s['x']) / int(img_s['y']) == aspect_ratio:
+                                self.href_list.append(img_s['u'])
+                    else:
+                        assert 'Unknown attribute. The post is not recognized'
+                        continue
+                pbar.update()
+            print()
 
     def _download_from_resource(self):
         """Рандомный выбор картинки и её загрузка"""
@@ -220,11 +234,28 @@ class UpdateWall:
             exit()
 
         img_link = random.choice(self.href_list)
-        resource = requests.get(img_link)
-        print('')
-        out = open(self.file_path, 'wb')
-        out.write(resource.content)
-        out.close()
+        with requests.get(img_link, stream=True) as resource:
+            try:
+                total_length = int(resource.headers.get('Content-Length'))
+
+                with tqdm.wrapattr(resource.raw, 'read', total=total_length, desc="") as raw:
+                    with open(self.file_path, 'wb') as out:
+                        shutil.copyfileobj(raw, out)
+                print()
+            except TypeError as er:
+                if not self.recursion:
+                    self._download_from_resource()
+                    self.resource = True
+                else:
+                    assert er
+                    print(er)
+                    exit('error')
+
+
+        # resource = requests.get(img_link)
+        # out = open(self.file_path, 'wb')
+        # out.write(resource.content)
+        # out.close()
 
     def install(self):
         """Загрузка с выбранного ресурса"""
