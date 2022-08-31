@@ -83,7 +83,8 @@ class UpdateWall:
         if self._display_resolution_valid(display_resolution):
             return display_resolution
         assert 'unvalid display resolution'
-        return display_resolution
+        config = read_config()
+        return config['display']['resolution']
 
     def _os_system(self):
         """Проверка установленной операционной системы"""
@@ -164,8 +165,9 @@ class UpdateWall:
     def get_link_list_reddit_redditor(self):
         # TODO оптимизировать и сделать более универсальным
         """"Получение ссылок изображений с постов пользователя"""
-        users_comments = self.reddit.redditor('ze-robot').new(limit=self.limit)
-        reg = r'https://resi\.ze-robot\.com/[\w/-]*-1920%C3%971080.jpg'
+        users_comments = self.reddit.redditor(self.resource).new(limit=self.limit)
+        horizontal, vertical = self.display_resolution.split('x')
+        reg = fr'https://resi\.ze-robot\.com/[\w/-]*-{horizontal}%C3%97{vertical}.jpg'
 
         for comment in users_comments:
             for link in re.findall(reg, comment.body_html):
@@ -210,9 +212,16 @@ class UpdateWall:
 
     def _download_from_resource(self):
         """Рандомный выбор картинки и её загрузка"""
+        if not self.href_list:
+            assert ('No images matching your parameters were found.'
+                    'Try different resolution settings for the image.')
+            print('No images matching your parameters were found.'
+                  'Try different resolution settings for the image.')
+            exit()
+
         img_link = random.choice(self.href_list)
         resource = requests.get(img_link)
-
+        print('')
         out = open(self.file_path, 'wb')
         out.write(resource.content)
         out.close()
