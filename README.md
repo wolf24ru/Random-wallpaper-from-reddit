@@ -15,21 +15,19 @@
 >    - 11
 ___
 
-### To run the code:
-- Go to the folder with `Wall.py `;
-- Call the terminal;
-- Install >=[python 3.10](https://www.python.org/downloads/)
+## To run the code:
+- Install >= [python 3.10](https://www.python.org/downloads/)
+- Go to the folder with `Wall.py`;
 - Create `secret.py` file 
 - In secret.py write data from [your app in reddit](https://www.reddit.com/prefs/apps)
-- Run the following command:
-```shell
-python3 Wall.py 
-```
+- Call the terminal;
+- Install python models: `pip3 install -r requirements.txt`
+- Run the following command: `python3 Wall.py`
 ___
 In secret.py must be:
-```shell
-client_id = 'client_id'
-client_secret = 'client_secret'
+```python
+client_id = 'client_id' # personal use script
+client_secret = 'client_secret' #secret
 user_agent = 'Wallpaper_or_other_app_name' 
 ```
 
