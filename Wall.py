@@ -93,22 +93,22 @@ class UpdateWall:
             case 'Windows':
                 ctypes.windll.user32.SystemParametersInfoW(20, 0, str(self.file_path), 3)
 
-    def __set_kde_wallpaper(self):
-        plugin = 'org.kde.image'
-        jscript = f"""
-        var allDesktops = desktops();
-        print (allDesktops);
-        for (i=0;i<allDesktops.length;i++) {{
-            d = allDesktops[i];
-            d.wallpaperPlugin = "{plugin}";
-            d.currentConfigGroup = Array("Wallpaper", "{plugin}", "General");
-            d.writeConfig("Image", "file://{self.file_path}")
-        }}
-        """
-        bus = dbus.SessionBus()
-        plasma = dbus.Interface(bus.get_object(
-            'org.kde.plasmashell', '/PlasmaShell'), dbus_interface='org.kde.PlasmaShell')
-        plasma.evaluateScript(jscript)
+    # def __set_kde_wallpaper(self):
+    #     plugin = 'org.kde.image'
+    #     jscript = f"""
+    #     var allDesktops = desktops();
+    #     print (allDesktops);
+    #     for (i=0;i<allDesktops.length;i++) {{
+    #         d = allDesktops[i];
+    #         d.wallpaperPlugin = "{plugin}";
+    #         d.currentConfigGroup = Array("Wallpaper", "{plugin}", "General");
+    #         d.writeConfig("Image", "file://{self.file_path}")
+    #     }}
+    #     """
+    #     bus = dbus.SessionBus()
+    #     plasma = dbus.Interface(bus.get_object(
+    #         'org.kde.plasmashell', '/PlasmaShell'), dbus_interface='org.kde.PlasmaShell')
+    #     plasma.evaluateScript(jscript)
 
     def _linux_release(self):
         """"Проверка рабочего окружения и выдача команды на изменение обоев"""
@@ -132,9 +132,10 @@ class UpdateWall:
                     .stdout.decode('utf-8')
                 os.system(f"xfconf-query -c xfce4-desktop -p {desktop_wallpaper} -s {self.file_path}")
             case 'KDE':
+                print('Currently not implemented')
                 # Та же ситуация, что и с LXQt меняет только один раз и выполнении не меняет изображение при том же
                 # названии файла
-                self.__set_kde_wallpaper()
+                # self.__set_kde_wallpaper()
             case _:
                 assert 'Неизвестное графическое окружение'
                 # TODO Вставить сюда предложение использовать команду без имени файла для изменения обоев
@@ -244,8 +245,8 @@ def save_config(config, arg):
     # config['display']['ratio'] = arg.ratio
     PATH = pathlib.Path(__file__).parent.absolute()
     with open(PATH / 'config.yaml', 'w') as f:
-        config = yaml.dump(config, stream=f,
-                           default_style=False, sort_keys=False)
+        yaml.dump(config, stream=f,
+                  default_style=False, sort_keys=False)
 
 
 def read_config():
