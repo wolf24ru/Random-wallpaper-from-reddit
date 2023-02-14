@@ -13,6 +13,7 @@
 > 
 >  - Windows:
 >    - 11
+     - 10
 ___
 
 ## To run the code:
