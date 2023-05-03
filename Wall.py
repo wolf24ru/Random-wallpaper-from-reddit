@@ -215,9 +215,13 @@ class UpdateWall:
                         p = 0
                         for img in post.media_metadata.values():
                             p += 1
-                            img_s = img['s']
-                            if int(img_s['x']) / int(img_s['y']) == aspect_ratio:
-                                self.href_list.append(img_s['u'])
+                            try:
+                                img_s = img['s']
+                            except KeyError:
+                                continue
+                            else:
+                                if int(img_s['x']) / int(img_s['y']) == aspect_ratio:
+                                    self.href_list.append(img_s['u'])
                     else:
                         assert 'Unknown attribute. The post is not recognized'
                         continue
