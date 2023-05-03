@@ -1,8 +1,8 @@
 main:
-  file_path: .
+  file_path: /home/user/Walls
   file_name: background.jpg
   limit: 20
-  resource: ze-robot
+  resource: r-wallpaper
 display:
   resolution: 1920x1080
   ratio: '16:9'
