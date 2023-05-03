@@ -1,5 +1,5 @@
 # Random-wallpaper
-(ru) Загрузка и установка случайных обоев и [ze-robot](https://www.reddit.com/user/ze-robot/?sort=new) и [r-wallpaper](https://www.reddit.com/r/wallpaper/new/).
+(ru) Загрузка и установка случайных обоев из [ze-robot](https://www.reddit.com/user/ze-robot/?sort=new) и [r-wallpaper](https://www.reddit.com/r/wallpaper/new/).
 
 (en)Download and install random wallpaper from [ze-robot](https://www.reddit.com/user/ze-robot/?sort=new) and [r-wallpaper](https://www.reddit.com/r/wallpaper/new/). 
 
@@ -13,6 +13,7 @@
 > 
 >  - Windows:
 >    - 11
+>    - 10
 ___
 
 ## To run the code:
